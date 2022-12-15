@@ -1,0 +1,90 @@
+workflows:
+  ios-workflow:
+    name: EasyApp iOS without OneSignal
+    max_build_duration: 30
+    environment:
+      vars:
+        XCODE_WORKSPACE: "Runner.xcworkspace"
+        XCODE_SCHEME: "Runner"
+        APP_STORE_CONNECT_ISSUER_ID: 82886d5c-26ee-4e1c-99c7-247e76d7978f
+        APP_STORE_CONNECT_KEY_IDENTIFIER: 77GDJVQYU9
+        APP_STORE_CONNECT_PRIVATE_KEY: |-
+         -----BEGIN PRIVATE KEY-----
+         MIGTAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBHkwdwIBAQQgNUWkiDbgvRYLo0kp
+         6gQBFi1y5ydlzMfQL9oTZA1VcVWgCgYIKoZIzj0DAQehRANCAASZkIynXr6MIp6j
+         5pXHdzS3TX6r3BpZydMJEP+CGybaiUBOhy2L9b7TxjBKh2kSDAMhwlHH+LBC1BIu
+         GjMgm6i1
+         -----END PRIVATE KEY-----
+
+        CERTIFICATE_PRIVATE_KEY: |-
+         -----BEGIN RSA PRIVATE KEY-----
+         MIIEowIBAAKCAQEAmw8RIOBMlAFubDjqzKwzZgsYDw1GJygLuchpuXlHSjz7dCe4
+         lNWdF/RqtW2KCeExr+xUqBIpTXPG+OckAK0CQgyDttk2M9NogqoaJ+Guieo/AWVr
+         DtO3Up7lU5Dyx5YbUo//kHx7PiXjoTNFOP2DCnc7C2Jv+1nRvhLlamcJAnKdjRyH
+         OdO8pJZm4dT5eJWJf77kEFA/H1NV2qwyMjU70MMrfeVUe/M1sI5kPoWwKmOS3lyk
+         s0IJYytmr+WEsE05jlxGaOsflP0Om3egFZUThd0Goww477nd+c7jgIaRpv/bRpfs
+         ef/X9wXiSuwmZs7W4WYjHmzEqyaPLrCx4ADIPQIDAQABAoIBABAej9xIFQ3p3C3Z
+         +ObQHAPGsXiXG6zkZ9unbv4+EmAwWL+phXHLhyo/WXyE563BQGYWfnJ+eNa5a3zi
+         ooaDddGh9Wtjx1O57Ypv3oo41uk1ddlSTr/a2Jr5M8PtNJ/1BeAeYiYGGtXKIJDY
+         gKC9Egtbe8LiN9v8aWaGFl1qWrBrSllukSdphNZNSkomD5qGrAFGjIlY0wwq3BB+
+         9sTpD7q2/AIdWvdmzaQjCkOUSOLrdoJy4fzvU+q8atD44cpBHEWEvoVZUaJgfCW0
+         8CcmtG+KQSs2Wul60FcrfkbmuK/9kYl74AOFzr7eVR2FJShmhRhHKdWH7MMglSHz
+         l99k300CgYEA1Y/Qa5wksjRFCeH6iEBHSQE6esmZe5I0Xn/0eJxK+TSg/waJt+RE
+         QaoN6aDVYSnBrbkV4UD5hHXwOA3YyMxnqhFvqO3FjnbWomKr72KFMIrGIkU+oIgz
+         9VqqeHqQacVP6JEmK9CfaQlWx1zMGygEBEqOFfaIr71iMb5QJiCxWFMCgYEAud8g
+         ph53YeusKQ3Rbvsfc2kduadOZxQ1Ft3aqPHK+TvgY8+SIVrbl0rAHcgqaRwMl7TW
+         K/MxJyySCQsL11CkpfjPJ5qkC7MYAwEH5BlY341ho96qm638pzQr/dCa02xeKiFY
+         S6Mu+WfDUj8XCbjGCC3ZXMBq9z4NZsZvSDACCy8CgYEApYeD53SuaMXk4SUb1/Hi
+         ju550mRiJ4qKNtj8t2OFJSWqyCDcLAGs+iyB/hzgZyBDc5CrKd3/yLDVUc1Bw1nT
+         29kJ8Cjj4GmyMUlDtRdq3tYhfrynLyyDAWCWEy4Es0bxifS/XmSkung3n+0IcuAQ
+         RPc4rENbbMPg0WeOng7nBusCgYAYmnt04cWFta91Q7n8Sctw+HIR2B6dsGQSoc1G
+         3bKzaQSb0acTOTamASQLDSrn/OmBz1MmQCu6dsDh549qsecJfTTWljauwcck5qcH
+         v38vIETTby8AKniuHU7RayKDZ+3S/9TzNieKpfyJz4YaKFY2UPNbvrCqB5G4j/28
+         /XXXywKBgGs1Iz/luJD3D4VXBmzaYR4jzHr6Zx+y5VauBbGfbSnUM2bSYWrDEJK9
+         ciIpn7A8Eu2ExuB3bPv+AIucb39VTtKbmTM6bZJNvkPJuNmFNZrtHzpTUfteKzZu
+         sQ1heCTkPhyYV6x1+vTwS0oUaXiaSCmBr6QflnCxZMkNbQQze+m3
+         -----END RSA PRIVATE KEY-----
+         
+
+        BUNDLE_ID: "com.viot.class"
+      flutter: stable
+      xcode: 13.3
+      cocoapods: default
+    scripts:
+      - name: Set up keychain to be used for codesigning using Codemagic CLI 'keychain' command
+        script: |
+          keychain initialize
+      - name: Fetch signing files
+        script: |
+          app-store-connect fetch-signing-files $BUNDLE_ID --type IOS_APP_STORE --create --log-api-calls --verbose
+      - name: Use system default keychain
+        script: |
+          keychain add-certificates
+      - name: Set up code signing settings on Xcode project
+        script: |
+          xcode-project use-profiles
+      - name: Get Flutter packages
+        script: |
+          cd . && flutter packages pub get
+      - name: Install pods
+        script: |
+          find . -name "Podfile" -execdir pod install \;
+      - name: Flutter build ipa and automatic versioning
+        script: |
+          flutter build ipa --release \
+          --build-name=1.0.0 \
+          --build-number={APP_VERSION} \
+          --export-options-plist=/Users/builder/export_options.plist
+    artifacts:
+      - build/ios/ipa/*.ipa
+      - /tmp/xcodebuild_logs/*.log
+      - flutter_drive.log
+    publishing:
+      app_store_connect:
+        api_key: $APP_STORE_CONNECT_PRIVATE_KEY
+        key_id: $APP_STORE_CONNECT_KEY_IDENTIFIER
+        issuer_id: $APP_STORE_CONNECT_ISSUER_ID
+      scripts:
+        - name: HTTP notification
+          script: |
+            curl https://app.easyapp.ai/backend/api/observe/notice/46a98d1e-f689-ad4d-db1d-914813edc273
